@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login Success</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<script>
+    let logoutTimer;
+
+    function resetLogoutTimer() {
+        clearTimeout(logoutTimer);
+        logoutTimer = setTimeout(logoutUser, 3000); // 5 minutes in milliseconds
+    }
+
+    function logoutUser() {
+        // Clear cookies
+        document.cookie.split(";").forEach(function(cookie) {
+            var eqPos = cookie.indexOf("=");
+            var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+            document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        });
+        const logoutLink = document.getElementById('logoutLink');
+            logoutLink.click();
+        console.log("User logged out due to inactivity");
+    }
+
+    // Add event listeners to reset the timer on user activity
+    document.addEventListener('mousemove', resetLogoutTimer);
+    document.addEventListener('keydown', resetLogoutTimer);
+    document.addEventListener('scroll', resetLogoutTimer);
+
+    // Start the initial timer when the page loads
+    resetLogoutTimer();
+</script>
+
+<body>
+    <div class="center">
+        <div class="container">
+            <h1>Login Successful</h1>
+            <p>Congratulations, {{ current_user.username }}! You have successfully logged in.</p>
+            <p>You logged in from Home Location</p>
+            <p>Thank you for using our authentication system.</p>
+            <a id="logoutLink" href="{{ url_for('index') }}">Logout</a>
+        </div>
+    </div>
+</body>
+</html>

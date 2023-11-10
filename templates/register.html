@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Registration</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+    <style>
+        /* Add a CSS class for the red border */
+        .error-border {
+            border: 2px solid red;
+        }
+        /* Add a CSS class for error messages */
+        .error-message {
+            color: red;
+        }
+    </style>
+    <script>
+
+       // Password validation function
+function validatePassword() {
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+    const username = document.getElementById('username').value;
+    const dob = document.getElementById('dob_year').value; // Replace with the actual way to retrieve the DOB
+    
+    // Password validation rules
+    const alphanumericRegex = /^[a-zA-Z0-9]+$/;
+    const minLength = 8;
+    
+    // Reset error messages and borders
+    const errorLabels = document.getElementsByClassName('error-message');
+    for (let i = 0; i < errorLabels.length; i++) {
+        errorLabels[i].style.display = 'none';
+    }
+    document.getElementById('password').classList.remove('error-border');
+    document.getElementById('confirmPassword').classList.remove('error-border');
+    
+    if (password.length < minLength) {
+        document.getElementById('password').classList.add('error-border');
+        document.getElementById('passwordLengthError').style.display = 'block';
+        return false;
+    }
+    
+    if (!alphanumericRegex.test(password)) {
+        document.getElementById('password').classList.add('error-border');
+        document.getElementById('passwordAlphanumericError').style.display = 'block';
+        return false;
+    }
+    
+    if (password.includes(username)) {
+        document.getElementById('password').classList.add('error-border');
+        document.getElementById('passwordContainsError').style.display = 'block';
+        return false;
+    }
+    if (password.includes(dob)) {
+        document.getElementById('password').classList.add('error-border');
+        document.getElementById('passwordContainsError').style.display = 'block';
+        return false;
+    }
+    
+    if (password !== confirmPassword) {
+        document.getElementById('confirmPassword').classList.add('error-border');
+        document.getElementById('confirmPasswordError').style.display = 'block';
+        return false;
+    }
+    
+    return true;
+}
+
+    </script>
+
+
+
+
+</head>
+<body>
+    <div class="center">
+        <div class="container">
+            <h1>Create an Account</h1>
+            <form action="{{ url_for('register') }}" method="post" onsubmit="return validatePassword()">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" placeholder="Choose a username" required>
+                <label for="email">Email:</label>
+                <input type="text" id="email" name="email" placeholder="Choose a Email" required>
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" placeholder="Enter a password" required>
+                <span class="error-message" id="passwordLengthError" style="display: none;">Password must be at least 8 characters long.</span>
+                <span class="error-message" id="passwordAlphanumericError" style="display: none;">Password must only contain alphanumeric characters.</span>
+                <span class="error-message" id="passwordContainsError" style="display: none;">Password cannot contain username or DOB.</span>
+                <label for="confirmPassword">Confirm Password:</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm password" required>
+                <span class="error-message" id="confirmPasswordError" style="display: none;">Passwords do not match.</span>
+                <label for="dob">Date of Birth:</label>
+<input type="date" id="dob" name="dob" required>
+<input type="hidden" id="dob_year" name="dob_year" placeholder="Year of birth" required>
+                              <!-- Add secret questions here -->
+                <label for="question1">Secret Question 1:</label>
+                <input type="text" id="question1" name="question1" placeholder="Enter your first secret question" required>
+                <label for="answer1">Answer:</label>
+                <input type="text" id="answer1" name="answer1" placeholder="Enter the answer" required>
+                
+                <label for="question2">Secret Question 2:</label>
+                <input type="text" id="question2" name="question2" placeholder="Enter your second secret question" required>
+                <label for="answer2">Answer:</label>
+                <input type="text" id="answer2" name="answer2" placeholder="Enter the answer" required>
+                
+                <input type="hidden" id="platform_name" name="platform_name" value="{{ platform_name }}">
+                
+                <button type="submit">Register</button>
+            </form>
+            <p>Already have an account? <a href="{{ url_for('index') }}">Login</a></p>
+        </div>
+    </div>
+</body>
+<script>
+    // Add an event listener to the date input to automatically extract and store the year
+    document.addEventListener("DOMContentLoaded", function() {
+        const dobInput = document.getElementById('dob');
+        const dobYearInput = document.getElementById('dob_year');
+
+        dobInput.addEventListener('input', function() {
+            // Get the selected date from the date input
+            const selectedDate = new Date(dobInput.value);
+
+            // Check if a valid date is selected
+            if (!isNaN(selectedDate.getTime())) {
+                // Extract the year and update the year input field
+                const year = selectedDate.getFullYear();
+                dobYearInput.value = year;
+            } else {
+                // Clear the year input field if an invalid date is selected
+                dobYearInput.value = '';
+            }
+        });
+    });
+</script>
+</html>

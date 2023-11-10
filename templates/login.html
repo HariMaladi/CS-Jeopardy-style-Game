@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+    
+    <style>
+        /* Add a CSS class for the red border */
+        .error-border {
+            border: 2px solid red;
+        }
+        /* Add a CSS class for error messages */
+        .error-message {
+            color: red;
+        }
+    </style>
+    <script>
+        // Password validation function
+        function validatePassword() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password');
+            const dob = ''; // Replace with the actual way to retrieve the DOB
+            
+            // Password validation rules
+            const alphanumericRegex = /^[a-zA-Z0-9]+$/;
+            const minLength = 8;
+            
+            // Reset error messages and borders
+            const errorLabels = document.getElementsByClassName('error-message');
+            for (let i = 0; i < errorLabels.length; i++) {
+                errorLabels[i].style.display = 'none';
+            }
+            password.classList.remove('error-border');
+            
+            if (password.value.length < minLength) {
+                password.classList.add('error-border');
+                document.getElementById('passwordLengthError').style.display = 'block';
+                return false;
+            }
+            
+            if (!alphanumericRegex.test(password.value)) {
+                password.classList.add('error-border');
+                document.getElementById('passwordAlphanumericError').style.display = 'block';
+                return false;
+            }
+            
+            if (password.value.includes(username)) {
+                password.classList.add('error-border');
+                document.getElementById('passwordContainsError').style.display = 'block';
+                return false;
+            }
+            
+            return true;
+        }
+        
+        // Reset the border when input changes
+        function resetBorder() {
+            const password = document.getElementById('password');
+            password.classList.remove('error-border');
+        }
+    </script>
+</head>
+<body>
+    <div class="center">
+        <div class="container">
+            <h1>Welcome Back!</h1>
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                        <li>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+            {% endwith %}
+            
+            <form action="{{ url_for('login') }}" method="post" onsubmit="return validatePassword()">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" placeholder="Enter your username" value="{{ request.form.username|default('') }}" required>
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" placeholder="Enter your password" required oninput="resetBorder()">
+                <span class="error-message" id="passwordLengthError" style="display: none;">Password must be at least 8 characters long.</span>
+                <span class="error-message" id="passwordAlphanumericError" style="display: none;">Password must only contain alphanumeric characters.</span>
+                <span class="error-message" id="passwordContainsError" style="display: none;">Password cannot contain username or DOB.</span>
+                <button type="submit">Login</button>
+            </form>
+            <p>Don't have an account? <a href="{{ url_for('register') }}">Register</a></p>
+            <p>Forgot your password? <a href="{{ url_for('forgot_password') }}">Reset Password</a></p>
+        </div>
+    </div>
+</body>
+</html>
